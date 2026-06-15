@@ -17,6 +17,7 @@ print(sd.query_devices())
 print("default:", sd.default.device)
 stream=sd.InputStream(device=2, callback=source.callback, channels=2, samplerate=44100, blocksize=2024)
 stream.start()
+smooth_vals=None
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -38,13 +39,17 @@ while True:
         #brother they get it so easy with the libraries and shi , like , everything is just a fonction u dont have to do anything 
         if source.last_s is not None: 
             streamio=np.array_split(source.last_s,120)
-            bar_val=[np.mean(bar) for bar in streamio]
-            xb=40
-            print(source.last_s)
-            for b in bar_val:
-                h=int(b*5)
-                pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
-                xb+=10
-            
-            
+            bar_val=np.array([np.mean(bar) for bar in streamio])
+
+        if smooth_vals is None:
+            smooth_vals = bar_val
+        else:
+            smooth_vals =smooth_vals*0.8+bar_val*0.2
+        xb=40
+        for b in smooth_vals:
+            h=int(b*5)
+            pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
+            xb+=10
+                    
+                    
     pygame.display.flip()
