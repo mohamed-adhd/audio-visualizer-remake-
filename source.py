@@ -66,8 +66,8 @@ class Button:
 last_s=None
 def callback(indata,frames,times,status):
         global last_s
-        samples=indata[:,0]
-        last_s=np.ab(np.fft.rfft(samples))
+        samples=indata.mean(axis=1)
+        last_s=np.abs(np.fft.rfft(samples))
 
 
 

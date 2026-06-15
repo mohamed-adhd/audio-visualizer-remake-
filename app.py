@@ -1,6 +1,7 @@
 import pygame 
 import sys
-from source import Button,callback,last_s
+import source
+from source import Button
 import sounddevice as sd
 import numpy as np
 pygame.init()
@@ -12,8 +13,10 @@ impo=Button(450,350,150,75,"import a file",pygame.Color('green'),pygame.Color('d
 live =Button(650,350,150,75,"live mode",pygame.Color('blue'),pygame.Color('dark blue'),pygame.Color('black'))
 weltxt="welcome to audio visualizer remake ! choose your input :"
 txt1=font.render(weltxt,True,pygame.Color('white'))
-stream=sd.InputStream(callback=callback,channels=2,samplerate=44100,blocksize=2024)
-
+print(sd.query_devices())
+print("default:", sd.default.device)
+stream=sd.InputStream(device=2, callback=source.callback, channels=2, samplerate=44100, blocksize=2024)
+stream.start()
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -31,14 +34,17 @@ while True:
         impo.draw(screen)
         live.draw(screen)
         screen.blit(txt1,(385,100))
-    elif mode==1:
+    elif mode==2:
         #brother they get it so easy with the libraries and shi , like , everything is just a fonction u dont have to do anything 
-        stream=np.array_split(last_s,120)
-        bar_val=[np.mean(bar) for bar in stream]
-        xb=40
-        for b in bar_val:
-            pygame.draw.rect(screen,pygame.Color('white'),(xb,720-b,b,10))
-            xb+=10
+        if source.last_s is not None: 
+            streamio=np.array_split(source.last_s,120)
+            bar_val=[np.mean(bar) for bar in streamio]
+            xb=40
+            print(source.last_s)
+            for b in bar_val:
+                h=int(b*5)
+                pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
+                xb+=10
             
             
     pygame.display.flip()
