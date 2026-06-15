@@ -1,4 +1,5 @@
 import pygame 
+import numpy as np
 #disclaimer : this button set is ai generated , got bigger fish to fry than designing a button class for 5 hours..
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color, text_color=pygame.Color('white')):
@@ -62,8 +63,11 @@ class Button:
         """Change button text"""
         self.text = new_text
 
-
-def process
+last_s=None
+def callback(indata,frames,times,status):
+        global last_s
+        samples=indata[:,0]
+        last_s=np.ab(np.fft.rfft(samples))
 
 
 

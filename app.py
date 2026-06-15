@@ -1,6 +1,6 @@
 import pygame 
 import sys
-from source import Button
+from source import Button,callback,last_s
 import sounddevice as sd
 pygame.init()
 font=pygame.font.Font(None,30)
@@ -11,7 +11,9 @@ impo=Button(450,350,150,75,"import a file",pygame.Color('green'),pygame.Color('d
 live =Button(650,350,150,75,"live mode",pygame.Color('blue'),pygame.Color('dark blue'),pygame.Color('black'))
 weltxt="welcome to audio visualizer remake ! choose your input :"
 txt1=font.render(weltxt,True,pygame.Color('white'))
+
 while True:
+    stream=sd.InputStream(callback=callback,channels=2,samplerate=44100,blocksize=2024)
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             pygame.quit()
@@ -28,5 +30,8 @@ while True:
         impo.draw(screen)
         live.draw(screen)
         screen.blit(txt1,(385,100))
-    l
+    elif mode==1:
+        for b in last_s:
+            s
+            
     pygame.display.flip()
