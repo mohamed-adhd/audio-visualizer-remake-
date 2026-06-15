@@ -1,8 +1,9 @@
 import pygame 
 import sys
 from source import Button
+import sounddevice as sd
 pygame.init()
-font=pygame.font.Font(None,25)
+font=pygame.font.Font(None,30)
 screen=pygame.display.set_mode((1280,720))
 pygame.display.set_caption("remake viz")
 mode=0
@@ -15,14 +16,17 @@ while True:
         if event.type==pygame.QUIT:
             pygame.quit()
             sys.exit()
-        impo.handle_event(event)
-        live.handle_event(event)
-    if impo.clicked:
-        mode=1
+        if mode==0:
+            if(impo.handle_event(event)):
+                mode=1
+                impo.is_hovered=False
+            elif(live.handle_event(event)):
+                mode=2
+                live.is_hovered=False
+    screen.fill(pygame.Color("black"))
     if mode==0:
         impo.draw(screen)
         live.draw(screen)
         screen.blit(txt1,(385,100))
-    if mode==1:
-        impo.draw(screen)
+    l
     pygame.display.flip()
