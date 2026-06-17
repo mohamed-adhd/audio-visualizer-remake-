@@ -7,7 +7,10 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 import soundfile as sf
-
+import time
+from pydub import AudioSegment
+from pydub.playback import play
+import threading
 pygame.init()
 font=pygame.font.Font(None,30)
 screen=pygame.display.set_mode((1280,720))
@@ -26,6 +29,7 @@ root=tk.Tk()
 root.withdraw()
 file=None
 pos=0
+clock=pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -37,8 +41,10 @@ while True:
                 title="Select a file",
                 filetypes=[("All Files", "*.*")]
                 )
+                song = AudioSegment.from_mp3(file)
                 data,sr=sf.read(file)
                 mode=1
+                threading.Thread(target=play, args=(song,), daemon=True).start()
                 impo.is_hovered=False
             elif(live.handle_event(event)):
                 mode=2
@@ -69,25 +75,28 @@ while True:
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
     elif mode==1:
+        
         chunk = data[pos:pos+2048]
         if chunk.ndim>1:
             chunk=chunk.mean(axis=1)
         fft = np.abs(np.fft.rfft(chunk))
-        streamio=np.array_split(fft,120)
-        bar_val=np.array([np.mean(bar) for bar in streamio])
-
+        log_idx = np.geomspace(1, len(fft)-1, 121).astype(int).clip(0, len(fft)-1)
+        bar_val = np.array([np.mean(fft[log_idx[i]:log_idx[i+1]+1]) for i in range(120)])
+        max_val = np.max(bar_val)
+        if max_val > 0:
+            bar_val = bar_val / max_val
         if smooth_vals is None:
             smooth_vals = bar_val
         else:
             smooth_vals =smooth_vals*0.8+bar_val*0.2
         xb=40
         for b in smooth_vals:
-            h=int(b*5)
+            h=int(b*600)
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
         pos+=2048
 
 
                     
-                    
+    clock.tick(44100//2048)
     pygame.display.flip()
