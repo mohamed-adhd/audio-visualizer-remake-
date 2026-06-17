@@ -55,14 +55,13 @@ while True:
         if smooth_vals is None:
             smooth_vals = bar_val
         else:
-            smooth_vals =smooth_vals*0.8+bar_val*0.2
+            smooth_vals =smooth_vals*0.5+bar_val*0.5
         xb=40
         for b in smooth_vals:
-            h=int(b*5)
+            h=int(b*600)
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
-    elif mode==1:
-        
+
                     
                     
     pygame.display.flip()
