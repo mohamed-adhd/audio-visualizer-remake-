@@ -63,6 +63,15 @@ while True:
             elif(live.handle_event(event)):
                 mode=2
                 live.is_hovered=False
+        elif mode==1:
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    pygame.mixer.music.stop()
+                    mode=0
+        elif mode==2:
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    mode=0
     screen.fill(pygame.Color("black"))
     if mode==0:
         impo.draw(screen)
@@ -82,11 +91,18 @@ while True:
         if smooth_vals is None:
             smooth_vals = bar_val
         else:
-            smooth_vals =smooth_vals*0.9+bar_val*0.1
+            smooth_vals =smooth_vals*0.85+bar_val*0.15
         xb=40
-        for b in smooth_vals:
+        for i,b in enumerate(smooth_vals):
             h=int(b*600)
-            pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
+            t = i / 120
+            if t < 0.33:
+                color = (255, int(t * 3 * 255), 0)       
+            elif t < 0.66:
+                color = (int((1 - (t - 0.33) * 3) * 255), 255, 0) # the color palette is a reference to "in rainbows" by radiohead , the beat goes rounnnnnnnnnnnnnnd
+            else:
+                color = (0, int((1 - (t - 0.66) * 3) * 255), 255) 
+            pygame.draw.rect(screen,color,(xb,720-h,8,h),border_radius=4)
             xb+=10
     elif mode==1:
         pm=pygame.mixer.music.get_pos()
