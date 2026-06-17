@@ -4,10 +4,11 @@ import source
 from source import Button
 import sounddevice as sd
 import numpy as np
+import io
 import tkinter as tk
 from tkinter import filedialog
 import soundfile as sf
-
+from tinytag import TinyTag
 pygame.init()
 pygame.mixer.init()
 font=pygame.font.Font(None,30)
@@ -28,6 +29,12 @@ root.withdraw()
 file=None
 pos=0
 clock=pygame.time.Clock()
+temp="now playing : "
+
+
+
+
+
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -39,10 +46,16 @@ while True:
                 title="Select a file",
                 filetypes=[("All Files", "*.*")]
                 )
+                temp+= file[file.rfind("/")+1:]
+                txtr=font.render(temp,True,pygame.Color('white'))
                 data,sr=sf.read(file)
                 mode=1
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
+                tag = TinyTag.get(file, image=True)
+                image_data = tag.get_image()
+                ims=pygame.image.load(io.BytesIO(image_data))
+                ims=pygame.transform.scale(ims,(300, 200))
                 impo.is_hovered=False
             elif(live.handle_event(event)):
                 mode=2
@@ -100,6 +113,9 @@ while True:
             pygame.draw.rect(screen,color,(xb,720-h,8,h))
             xb+=10
         pos+=2048
+        screen.blit(txtr,(900,50))
+        screen.blit(ims,(900,100))
+
 
 
                     
