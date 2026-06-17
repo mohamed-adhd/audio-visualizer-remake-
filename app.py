@@ -6,7 +6,7 @@ import sounddevice as sd
 import numpy as np
 import tkinter as tk
 from tkinter import filedialog
-
+import soundfile as sf
 
 pygame.init()
 font=pygame.font.Font(None,30)
@@ -25,6 +25,7 @@ smooth_vals=None
 root=tk.Tk()
 root.withdraw()
 file=None
+pos=0
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -36,6 +37,7 @@ while True:
                 title="Select a file",
                 filetypes=[("All Files", "*.*")]
                 )
+                data,sr=sf.read(file)
                 mode=1
                 impo.is_hovered=False
             elif(live.handle_event(event)):
@@ -66,6 +68,26 @@ while True:
             h=int(b*600)
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
+    elif mode==1:
+        chunk = data[pos:pos+2048]
+        log_idx = np.geomspace(1, len(chunk)-1, 121).astype(int).clip(0, len(chunk)-1)
+        bar_val = np.array([np.mean(chunk[log_idx[i]:log_idx[i+1]+1]) for i in range(120)])
+        max_val = np.max(bar_val)
+        if max_val > 1:
+            bar_val = bar_val / max_val
+        else:
+            bar_val = np.zeros(120)# noise 
+        
+        if smooth_vals is None:
+            smooth_vals = bar_val
+        else:
+            smooth_vals =smooth_vals*0.9+bar_val*0.1
+        xb=40
+        for b in smooth_vals:
+            h=int(b*600)
+            pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
+            xb+=10
+
 
                     
                     
