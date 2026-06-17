@@ -7,11 +7,9 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 import soundfile as sf
-import time
-from pydub import AudioSegment
-from pydub.playback import play
-import threading
+
 pygame.init()
+pygame.mixer.init()
 font=pygame.font.Font(None,30)
 screen=pygame.display.set_mode((1280,720))
 pygame.display.set_caption("remake viz")
@@ -41,10 +39,10 @@ while True:
                 title="Select a file",
                 filetypes=[("All Files", "*.*")]
                 )
-                song = AudioSegment.from_mp3(file)
                 data,sr=sf.read(file)
                 mode=1
-                threading.Thread(target=play, args=(song,), daemon=True).start()
+                pygame.mixer.music.load(file)
+                pygame.mixer.music.play()
                 impo.is_hovered=False
             elif(live.handle_event(event)):
                 mode=2
@@ -90,9 +88,16 @@ while True:
         else:
             smooth_vals =smooth_vals*0.8+bar_val*0.2
         xb=40
-        for b in smooth_vals:
+        for i,b in enumerate(smooth_vals):
             h=int(b*600)
-            pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
+            t = i / 120
+            if t < 0.33:
+                color = (255, int(t * 3 * 255), 0)        # red → yellow
+            elif t < 0.66:
+                color = (int((1 - (t - 0.33) * 3) * 255), 255, 0)  # yellow → green
+            else:
+                color = (0, int((1 - (t - 0.66) * 3) * 255), 255) 
+            pygame.draw.rect(screen,color,(xb,720-h,8,h))
             xb+=10
         pos+=2048
 
