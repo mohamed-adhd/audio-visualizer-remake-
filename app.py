@@ -19,7 +19,7 @@ weltxt="welcome to audio visualizer remake ! choose your input :"
 txt1=font.render(weltxt,True,pygame.Color('white'))
 print(sd.query_devices())
 print("default:", sd.default.device)
-stream=sd.InputStream(device=2, callback=source.callback, channels=2, samplerate=44100, blocksize=2024)
+stream=sd.InputStream(device=2, callback=source.callback, channels=2, samplerate=44100, blocksize=2048)
 stream.start()
 smooth_vals=None
 root=tk.Tk()
@@ -49,13 +49,18 @@ while True:
     elif mode==2:
         #brother they get it so easy with the libraries and shi , like , everything is just a fonction u dont have to do anything 
         if source.last_s is not None: 
-            streamio=np.array_split(source.last_s,120)
-            bar_val=np.array([np.mean(bar) for bar in streamio])
-
+            log_idx = np.geomspace(1, len(source.last_s)-1, 121).astype(int).clip(0, len(source.last_s)-1)
+            bar_val = np.array([np.mean(source.last_s[log_idx[i]:log_idx[i+1]+1]) for i in range(120)])
+            max_val = np.max(bar_val)
+            if max_val > 1:
+                bar_val = bar_val / max_val
+            else:
+                bar_val = np.zeros(120)# noise 
+            
         if smooth_vals is None:
             smooth_vals = bar_val
         else:
-            smooth_vals =smooth_vals*0.5+bar_val*0.5
+            smooth_vals =smooth_vals*0.9+bar_val*0.1
         xb=40
         for b in smooth_vals:
             h=int(b*600)
