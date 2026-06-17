@@ -90,7 +90,23 @@ while True:
             xb+=10
     elif mode==1:
         pm=pygame.mixer.music.get_pos()
+        
         ps=pm/ 1000
+                #s=pm//60
+        #if s==0:
+         #   tdt="00:"
+        #else :
+        #    tdt="0"+str(s)
+        #tdt+=str((pm%60000))+"/"+str(dur//60000)+":"+str(dur%60000)
+        e_m=str(int(ps//60))
+        es=str(int(ps% 60))
+
+        totm= str(int(dur//60))
+        tot_s=str(int(dur%60))
+        tdt=e_m+":"+es+"/"+totm+":"+tot_s
+
+
+
         chunk=data[pos:pos+2048]
         if chunk.ndim>1:
             chunk=chunk.mean(axis=1)
@@ -117,12 +133,12 @@ while True:
             pygame.draw.rect(screen,color,(xb,720-h,8,h),border_radius=4)
             xb+=10
         pos+=2048
-        screen.blit(txtr,(900,50))
-        screen.blit(ims,(900,100))
-        pygame.draw.rect(screen,pygame.Color('dark gray'),(50,50,800,20),border_radius=4)
-        pygame.draw.rect(screen,pygame.Color('white'),(50,50,(750/dur)*ps,20),border_radius=4)
-
-
+        screen.blit(txtr,(980,30))
+        screen.blit(ims,(980,70))
+        pygame.draw.rect(screen,pygame.Color('dark gray'),(150,30,800,20),border_radius=4)
+        pygame.draw.rect(screen,pygame.Color('white'),(150,30,(750/dur)*ps,20),border_radius=4)
+        tdt=font.render(tdt,True,pygame.Color('white'))
+        screen.blit(tdt,(50,30))
 
 
 
