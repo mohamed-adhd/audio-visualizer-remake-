@@ -44,21 +44,9 @@
 
 The visualizer renders `120` rounded spectrum bars across a `1280x720` Pygame window, using a bright red-to-yellow-to-cyan palette inspired by the colorful energy of *In Rainbows*.
 
-## Demo Video
-
-> Demo video placeholder: add the recording link or GitHub uploaded video here.
-
-```md
-https://github.com/user-attachments/assets/your-demo-video-id
-```
-
 ## Preview Space
 
-Add a screenshot or GIF here when the visualizer is ready to show:
-
-```md
-<img width="900" alt="Audio Visualizer Remake preview" src="YOUR_SCREENSHOT_URL_HERE" />
-```
+https://github.com/user-attachments/assets/73327060-09fa-4815-ae75-182fcad49a3d
 
 ## Features
 
