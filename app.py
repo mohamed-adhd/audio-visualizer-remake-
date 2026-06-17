@@ -33,7 +33,7 @@ temp="now playing : "
 
 
 
-
+cs=0
 
 while True:
     for event in pygame.event.get():
@@ -52,10 +52,13 @@ while True:
                 mode=1
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
-                tag = TinyTag.get(file, image=True)
-                image_data = tag.get_image()
+                tag= TinyTag.get(file, image=True)
+                image_data= tag.get_image()
                 ims=pygame.image.load(io.BytesIO(image_data))
                 ims=pygame.transform.scale(ims,(300, 200))
+                tag= TinyTag.get(file)
+                dur=tag.duration
+                
                 impo.is_hovered=False
             elif(live.handle_event(event)):
                 mode=2
@@ -86,8 +89,9 @@ while True:
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
     elif mode==1:
-        
-        chunk = data[pos:pos+2048]
+        pm=pygame.mixer.music.get_pos()
+        ps=pm/ 1000
+        chunk=data[pos:pos+2048]
         if chunk.ndim>1:
             chunk=chunk.mean(axis=1)
         fft = np.abs(np.fft.rfft(chunk))
@@ -105,16 +109,20 @@ while True:
             h=int(b*600)
             t = i / 120
             if t < 0.33:
-                color = (255, int(t * 3 * 255), 0)        # red → yellow
+                color = (255, int(t * 3 * 255), 0)       
             elif t < 0.66:
-                color = (int((1 - (t - 0.33) * 3) * 255), 255, 0)  # yellow → green
+                color = (int((1 - (t - 0.33) * 3) * 255), 255, 0) # the color palette is a reference to "in rainbows" by radiohead , the beat goes rounnnnnnnnnnnnnnd
             else:
                 color = (0, int((1 - (t - 0.66) * 3) * 255), 255) 
-            pygame.draw.rect(screen,color,(xb,720-h,8,h))
+            pygame.draw.rect(screen,color,(xb,720-h,8,h),border_radius=4)
             xb+=10
         pos+=2048
         screen.blit(txtr,(900,50))
         screen.blit(ims,(900,100))
+        pygame.draw.rect(screen,pygame.Color('dark gray'),(50,50,800,20),border_radius=4)
+        pygame.draw.rect(screen,pygame.Color('white'),(50,50,(750/dur)*ps,20),border_radius=4)
+
+
 
 
 
