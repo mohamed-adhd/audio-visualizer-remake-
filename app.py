@@ -70,23 +70,22 @@ while True:
             xb+=10
     elif mode==1:
         chunk = data[pos:pos+2048]
-        log_idx = np.geomspace(1, len(chunk)-1, 121).astype(int).clip(0, len(chunk)-1)
-        bar_val = np.array([np.mean(chunk[log_idx[i]:log_idx[i+1]+1]) for i in range(120)])
-        max_val = np.max(bar_val)
-        if max_val > 1:
-            bar_val = bar_val / max_val
-        else:
-            bar_val = np.zeros(120)# noise 
-        
+        if chunk.ndim>1:
+            chunk=chunk.mean(axis=1)
+        fft = np.abs(np.fft.rfft(chunk))
+        streamio=np.array_split(fft,120)
+        bar_val=np.array([np.mean(bar) for bar in streamio])
+
         if smooth_vals is None:
             smooth_vals = bar_val
         else:
-            smooth_vals =smooth_vals*0.9+bar_val*0.1
+            smooth_vals =smooth_vals*0.8+bar_val*0.2
         xb=40
         for b in smooth_vals:
-            h=int(b*600)
+            h=int(b*5)
             pygame.draw.rect(screen,pygame.Color('white'),(xb,720-h,8,h))
             xb+=10
+        pos+=2048
 
 
                     
